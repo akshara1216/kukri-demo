@@ -1,18 +1,17 @@
 
 package com.kukri.demo.moviecatalog.controller;
 
-import com.kukri.demo.moviecatalog.dao.DirectorRepository;
-import com.kukri.demo.moviecatalog.dao.MoviesRepository;
 import com.kukri.demo.moviecatalog.exception.ResourceNotFoundException;
 import com.kukri.demo.moviecatalog.model.Movie;
+import com.kukri.demo.moviecatalog.service.MovieApiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -23,13 +22,11 @@ import java.util.Map;
  */
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/v1")
 public class MoviesController {
-    @Autowired
-    MoviesRepository moviesRepository;
 
     @Autowired
-    DirectorRepository directorRepository;
+    MovieApiService movieApiService;
 
     /*
      * Get  movies list.
@@ -38,7 +35,7 @@ public class MoviesController {
      */
     @GetMapping("/movies")
     public List<Movie> getMovies() {
-        return moviesRepository.findAll();
+        return movieApiService.getMovies();
 
     }
 
@@ -50,12 +47,9 @@ public class MoviesController {
      * @throws ResourceNotFoundException the resource not found exception
      */
     @GetMapping("/movies/{id}")
-    public ResponseEntity<Object> getMovieById(@PathVariable(value = "id") Long moviesID)
+    public ResponseEntity<Object> getMovieById(@PathVariable(value = "id") Long movieID)
             throws ResourceNotFoundException {
-        Movie movie =
-                moviesRepository
-                        .findById(moviesID)
-                        .orElseThrow(() -> new ResourceNotFoundException("User not found on :: " + moviesID));
+        Movie movie = movieApiService.getMovieById(movieID);
         return ResponseEntity.ok().body(movie);
     }
 
@@ -66,7 +60,7 @@ public class MoviesController {
      */
     @PostMapping("/movies")
     public Movie createMovie(@Valid @RequestBody Movie movie) {
-        return moviesRepository.save(movie);
+       return movieApiService.createMovie(movie);
     }
 
     /**
@@ -82,59 +76,39 @@ public class MoviesController {
             @PathVariable(value = "id") Long movieID, @Valid @RequestBody Movie movieDetails)
             throws ResourceNotFoundException {
 
-        Movie movie =
-                moviesRepository
-                        .findById(movieID)
-                        .orElseThrow(() -> new ResourceNotFoundException("Movie not found on :: " + movieID));
-        movie = new Movie(movieDetails);
-        final Movie updatedMovie = moviesRepository.save(movie);
+        Movie updatedMovie = movieApiService.updateMovie(movieDetails,movieID);
         return ResponseEntity.ok(updatedMovie);
     }
 
     /**
      * Delete Movie map.
      *
-     * @param MovieId the Movie id
+     * @param movieId the Movie id
      * @return the map
      * @throws Exception the exception
      */
-    @DeleteMapping("/movie/{id}")
-    public Map<String, Boolean> deleteMovie(@PathVariable(value = "id") Long MovieId) throws Exception {
-        Movie Movie =
-                moviesRepository
-                        .findById(MovieId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Movie not found on :: " + MovieId));
+    @DeleteMapping("/movies/{id}")
+    public Map<String, Boolean> deleteMovie(@PathVariable(value = "id") Long movieId) throws Exception {
 
-        moviesRepository.delete(Movie);
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("deleted", Boolean.TRUE);
-        return response;
+        return movieApiService.deleteMovie(movieId);
     }
 
     /*
     firstname and lastname needs to sent as the path variable
     This API searches the movies based on the directoe first and last name
      */
-    @GetMapping("/findmovies/{directorfirstname}/{directorlastname}")
-    public List<Movie> getMoviesByDirectorName(@PathVariable(value = "directorfirstname")
-                                             String directorfirstname, @PathVariable(value = "directorlastname") String directorlastname) throws ResourceNotFoundException {
-        int directorID = directorRepository.findDirectorByFirstNameAndLastName(directorfirstname,directorlastname);
-        List<Movie> movies =  moviesRepository.findMoviesByDirectorName(directorID);
-        if(movies == null)
-        {
-            throw new ResourceNotFoundException("No Movies Found");
-        }
-        return movies;
+    @RequestMapping(value = "/movies", params = {"directorfirstname","directorlastname"})
+    public List<Movie> getMoviesByDirectorName(@RequestParam Optional<String>  directorfirstname,
+                                               @RequestParam Optional<String>  directorlastname)throws ResourceNotFoundException
+    {
+
+            return movieApiService.findMoviesByDirector(directorfirstname, directorlastname);
     }
 
-    @GetMapping("/findmovies/{rating}")
-    public List<Movie> getMoviesByRatings(@PathVariable(value = "rating") double rating) throws ResourceNotFoundException {
-        List<Movie> movies =  moviesRepository.findMoviesByMovieRating(rating);
-        if(movies == null)
-        {
-            throw new ResourceNotFoundException("No Movies Found");
-        }
-        return movies;
+    @RequestMapping(value = "/movies", params = "rating")
+    public List<Movie> getMoviesByRatings(@RequestParam(value = "rating") Optional<Double> rating) throws ResourceNotFoundException
+    {
+      return movieApiService.findMoviesByRating(rating);
     }
 
 

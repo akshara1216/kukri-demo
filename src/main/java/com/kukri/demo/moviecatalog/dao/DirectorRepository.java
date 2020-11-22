@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @Author Shruthi Gowda
@@ -17,6 +18,6 @@ import java.util.List;
 @Repository
 public interface DirectorRepository  extends JpaRepository<Director,Long> {
     @Query( value="SELECT id from director d where d.first_name = ?1 && last_name = ?2",nativeQuery = true)
-    int findDirectorByFirstNameAndLastName(String firstName,String lastName)throws ResourceNotFoundException;
+    Long findDirectorByFirstNameAndLastName(Optional<String> firstName, Optional<String> lastName)throws ResourceNotFoundException;
 
 }

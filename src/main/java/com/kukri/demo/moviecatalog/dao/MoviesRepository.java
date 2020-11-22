@@ -6,16 +6,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @Author Shruthi Gowda
- * implements the DB reposutory functionality for the model Movie.
+ * implements the DB repository functionality for the model Movie.
  */
 @Repository
 public interface MoviesRepository extends JpaRepository<Movie, Long> {
     @Query( value="SELECT * from Movie m where m.director_id = ?1",nativeQuery = true)
-    List<Movie> findMoviesByDirectorName(int directorId) ;
+    List<Movie> findMoviesByDirectorName(Long directorId) ;
 
-    @Query( value="SELECT * from Movie m where m.movie_rating > ''+?1",nativeQuery = true)
-    List<Movie> findMoviesByMovieRating(double movieRating);
+    @Query( value="SELECT * from Movie m where m.movie_rating > ''+?1 OR m.movie_rating = ''+?1",nativeQuery = true)
+    List<Movie> findMoviesByMovieRating(Optional<Double> movieRating);
 }
