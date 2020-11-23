@@ -3,17 +3,16 @@ package com.kukri.demo.moviecatalog.service.impl;
 import com.kukri.demo.moviecatalog.dao.DirectorRepository;
 import com.kukri.demo.moviecatalog.exception.ResourceNotFoundException;
 import com.kukri.demo.moviecatalog.model.Director;
-import com.kukri.demo.moviecatalog.service.DirectorApiService;
+import com.kukri.demo.moviecatalog.service.DirectorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @Component
-public class DirectorApiServiceImpl implements DirectorApiService {
+public class DirectorServiceImpl implements DirectorService {
 
     @Autowired
     DirectorRepository directorRepository;
@@ -47,7 +46,7 @@ public class DirectorApiServiceImpl implements DirectorApiService {
         director.setCountry(directordetails.getCountry());
         director.setFirstName(directordetails.getFirstName());
         director.setLastName(directordetails.getLastName());
-        director.setFlimIndustry(directordetails.getFlimIndustry());
+        director.setFilmIndustry(directordetails.getFilmIndustry());
         final Director updateDirector = directorRepository.save(director);
         return updateDirector;
     }
@@ -61,6 +60,7 @@ public class DirectorApiServiceImpl implements DirectorApiService {
 
         directorRepository.delete(director);
         Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted",true);
         return response;
     }
 }

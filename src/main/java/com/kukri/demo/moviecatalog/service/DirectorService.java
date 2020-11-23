@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public interface DirectorApiService {
+public interface DirectorService {
     List<Director> getDirectors();
     Director createDirector(Director director);
     Director getDirectorById(Long directorId) throws ResourceNotFoundException;

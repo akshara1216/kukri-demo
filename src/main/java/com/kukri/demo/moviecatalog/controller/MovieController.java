@@ -3,7 +3,7 @@ package com.kukri.demo.moviecatalog.controller;
 
 import com.kukri.demo.moviecatalog.exception.ResourceNotFoundException;
 import com.kukri.demo.moviecatalog.model.Movie;
-import com.kukri.demo.moviecatalog.service.MovieApiService;
+import com.kukri.demo.moviecatalog.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,10 +23,10 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/v1")
-public class MoviesController {
+public class MovieController {
 
     @Autowired
-    MovieApiService movieApiService;
+    MovieService movieApiService;
 
     /*
      * Get  movies list.

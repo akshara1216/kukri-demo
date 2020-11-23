@@ -1,19 +1,16 @@
 package com.kukri.demo.moviecatalog.controller;
 
 
-import com.kukri.demo.moviecatalog.dao.DirectorRepository;
 import com.kukri.demo.moviecatalog.exception.ResourceNotFoundException;
 import com.kukri.demo.moviecatalog.model.Director;
-import com.kukri.demo.moviecatalog.service.DirectorApiService;
+import com.kukri.demo.moviecatalog.service.DirectorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 
 /**
@@ -28,7 +25,7 @@ import java.util.Optional;
 public class DirectorController {
 
      @Autowired
-    DirectorApiService directorApiService;
+     DirectorService directorService;
 
     /*
      * Get  directors list.
@@ -37,7 +34,7 @@ public class DirectorController {
      */
     @GetMapping("/directors")
     public List<Director> getDirectors() {
-        return directorApiService.getDirectors();
+        return directorService.getDirectors();
 
     }
 
@@ -48,10 +45,10 @@ public class DirectorController {
      * @return the director  by id
      * @throws ResourceNotFoundException the resource not found exception
      */
-    @GetMapping("/director/{id}")
+    @GetMapping("/directors/{id}")
     public ResponseEntity<Object> getDirectorById(@PathVariable(value = "id") Long directorId)
             throws ResourceNotFoundException {
-        Director director = directorApiService.getDirectorById(directorId);
+        Director director = directorService.getDirectorById(directorId);
         return ResponseEntity.ok().body(director);
     }
     /*
@@ -59,24 +56,23 @@ public class DirectorController {
      * @param director the director
      * @return the director
      */
-    @PostMapping("/director")
-    public Director createdirector(@Valid @RequestBody Director director) {
-      return directorApiService.createDirector(director);
+    @PostMapping("/directors")
+    public Director createDirector(@Valid @RequestBody Director director) {
+      return directorService.createDirector(director);
     }
     /**
      * Update director response entity.
      *
      * @param directorId the director id
-     * @param directordetails the  details
+     * @param directorDetails the  details
      * @return the response entity
      * @throws ResourceNotFoundException the resource not found exception
      */
-    @PutMapping("/updateDirector/{id}")
+    @PutMapping("/directors/{id}")
     public ResponseEntity<Director> updateDirector(
-            @PathVariable(value = "id") Long directorId, @Valid @RequestBody Director directordetails)
+            @PathVariable(value = "id") Long directorId, @Valid @RequestBody Director directorDetails)
             throws ResourceNotFoundException {
-
-        Director updateDirector=  directorApiService.updateDirector(directordetails,directorId);
+        Director updateDirector=  directorService.updateDirector(directorDetails, directorId);
         return ResponseEntity.ok(updateDirector);
     }
 
@@ -87,12 +83,9 @@ public class DirectorController {
      * @return the map
      * @throws Exception the exception
      */
-    @DeleteMapping("/deletedirector/{id}")
+    @DeleteMapping("/directors/{id}")
     public Map<String, Boolean> deleteDirector(@PathVariable(value = "id") Long directorId) throws Exception {
-
-        return directorApiService.deleteDirector(directorId);
+        return directorService.deleteDirector(directorId);
     }
-
-
 }
 

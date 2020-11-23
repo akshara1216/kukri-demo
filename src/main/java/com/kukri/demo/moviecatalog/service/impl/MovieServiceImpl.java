@@ -4,7 +4,7 @@ import com.kukri.demo.moviecatalog.dao.DirectorRepository;
 import com.kukri.demo.moviecatalog.dao.MoviesRepository;
 import com.kukri.demo.moviecatalog.exception.ResourceNotFoundException;
 import com.kukri.demo.moviecatalog.model.Movie;
-import com.kukri.demo.moviecatalog.service.MovieApiService;
+import com.kukri.demo.moviecatalog.service.MovieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -14,13 +14,14 @@ import java.util.Map;
 import java.util.Optional;
 
 @Component
-public class MovieApiServiceImpl implements MovieApiService {
+public class MovieServiceImpl implements MovieService {
 
     @Autowired
-    MoviesRepository moviesRepository;
+    private MoviesRepository moviesRepository;
 
     @Autowired
-    DirectorRepository directorRepository;
+    private DirectorRepository directorRepository;
+
     @Override
     public List<Movie> getMovies() {
         return moviesRepository.findAll();
@@ -41,13 +42,12 @@ public class MovieApiServiceImpl implements MovieApiService {
     }
 
     @Override
-    public Movie updateMovie(Movie movieDetails,Long movieId) throws ResourceNotFoundException {
-        Movie movie =
-                moviesRepository
-                        .findById(movieId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Movie not found on :: " + movieId));
-        movie = new Movie(movieDetails);
-        final Movie updatedMovie = moviesRepository.save(movie);
+    public Movie updateMovie(Movie movieDetails, Long movieId) throws ResourceNotFoundException {
+        moviesRepository
+                .findById(movieId)
+                .orElseThrow(() -> new ResourceNotFoundException("Movie not found on :: " + movieId));
+
+        final Movie updatedMovie = moviesRepository.save(movieDetails);
         return updatedMovie;
     }
 
@@ -65,31 +65,25 @@ public class MovieApiServiceImpl implements MovieApiService {
     }
 
     @Override
-    public List<Movie> findMoviesByDirector(Optional<String> directorFirstName, Optional<String> directorLastname) throws ResourceNotFoundException {
-
+    public List<Movie> findMoviesByDirector(Optional<String> directorFirstName, Optional<String> directorLastName) throws ResourceNotFoundException {
         Long directorID;
         try {
-             directorID = directorRepository.findDirectorByFirstNameAndLastName(directorFirstName, directorLastname);
-        }catch (Exception e)
-        {
-            throw new ResourceNotFoundException("No movies found " + directorFirstName + directorLastname);
+             directorID = directorRepository.findDirectorByFirstNameAndLastName(directorFirstName, directorLastName);
+        } catch (Exception e) {
+            throw new ResourceNotFoundException("No movies found " + directorFirstName + directorLastName);
         }
-        List<Movie> movies;
 
-             movies = moviesRepository.findMoviesByDirectorName(directorID);
-             if(movies.isEmpty())
-             {
-                 throw new ResourceNotFoundException("No movies found " + directorFirstName + directorLastname);
-             }
-
+        List<Movie> movies = moviesRepository.findMoviesByDirectorName(directorID);
+        if(movies.isEmpty()) {
+         throw new ResourceNotFoundException("No movies found " + directorFirstName + directorLastName);
+        }
         return movies;
     }
 
     @Override
     public List<Movie> findMoviesByRating(Optional<Double> rating) throws ResourceNotFoundException {
         List<Movie> movies =  moviesRepository.findMoviesByMovieRating(rating);
-        if(movies.isEmpty())
-        {
+        if (movies.isEmpty()) {
             throw new ResourceNotFoundException("No Movies Found");
         }
         return movies;

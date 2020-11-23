@@ -17,8 +17,8 @@ public class Director {
     @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "flim_industry")
-    private String flimIndustry;
+    @Column(name = "film_industry")
+    private String filmIndustry;
 
     @Column(name = "country", nullable = false)
     private String country;
@@ -47,12 +47,12 @@ public class Director {
         this.lastName = lastName;
     }
 
-    public String getFlimIndustry() {
-        return flimIndustry;
+    public String getFilmIndustry() {
+        return filmIndustry;
     }
 
-    public void setFlimIndustry(String flimIndustry) {
-        this.flimIndustry = flimIndustry;
+    public void setFilmIndustry(String filmIndustry) {
+        this.filmIndustry = filmIndustry;
     }
 
     public String getCountry() {
@@ -69,7 +69,7 @@ public class Director {
                 .append("id", id)
                 .append("firstName", firstName)
                 .append("lastName", lastName)
-                .append("flimIndustry", flimIndustry)
+                .append("filmIndustry", filmIndustry)
                 .append("country", country)
                 .toString();
     }

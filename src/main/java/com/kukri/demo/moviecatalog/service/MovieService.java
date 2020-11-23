@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public interface MovieApiService {
+public interface MovieService {
     List<Movie> getMovies();
     Movie createMovie(Movie movie);
     Movie getMovieById(Long movieId) throws ResourceNotFoundException;
